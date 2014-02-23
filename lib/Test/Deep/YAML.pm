@@ -1,15 +1,13 @@
 use strict;
 use warnings;
 package Test::Deep::YAML;
-{
-  $Test::Deep::YAML::VERSION = '0.001';
-}
-# git description: ac4ca88
-
 BEGIN {
   $Test::Deep::YAML::AUTHORITY = 'cpan:ETHER';
 }
+# git description: v0.001-13-gc7b3f74
+$Test::Deep::YAML::VERSION = '0.002';
 # ABSTRACT: A Test::Deep plugin for comparing YAML-encoded data
+# vim: set ts=8 sw=4 tw=78 et :
 
 use parent 'Test::Deep::Cmp';
 use Exporter 'import';
@@ -52,8 +50,9 @@ sub descend
 
 sub diagnostics
 {
-    my $self = shift;
-    return $self->{error_message};
+    my ($self, $where, $last) = @_;
+    return $self->{error_message}
+        || $self->{val}->diagnostics($where, $last);
 }
 
 1;
@@ -62,7 +61,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =for :stopwords Karen Etheridge yaml irc
 
@@ -72,7 +71,7 @@ Test::Deep::YAML - A Test::Deep plugin for comparing YAML-encoded data
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -92,18 +91,14 @@ This module provides the C<yaml> function to indicate that the target can be
 parsed as a YAML string, and should be decoded before being compared to the
 indicated expected data.
 
-=head1 FUNCTIONS/METHODS
+=head1 FUNCTIONS
 
 =for Pod::Coverage descend diagnostics init
 
-=over 4
-
-=item * yaml
+=head2 yaml
 
 Contains the data which should match corresponding data in the "got" structure
 after it has been YAML-decoded.
-
-=back
 
 =head1 SUPPORT
 

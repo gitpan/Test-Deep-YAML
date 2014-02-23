@@ -2,12 +2,11 @@ use strict;
 use warnings FATAL => 'all';
 
 use Test::More;
-use Test::Warnings;
+use if $ENV{AUTHOR_TESTING}, 'Test::Warnings';
 use Test::Deep::YAML;
 
 use lib 't/lib';
 use Util;
-
 
 my @tests = (
     'invalid YAML' => {
@@ -43,7 +42,8 @@ my @tests = (
         diag => do {
             my ($ok, $diag) = cmp_diag(
                 { foo => { qux => 'baz' } },
-                { foo => { bar => 'baz' } });
+                { foo => { bar => 'baz' } },
+            );
             $diag;
         },
     },
@@ -54,7 +54,20 @@ my @tests = (
         diag => do {
             my ($ok, $diag) = cmp_diag(
                 { foo => { bar => 'qux' } },
-                { foo => { bar => 'baz' } });
+                { foo => { bar => 'baz' } },
+            );
+            $diag;
+        },
+    },
+    'no match (deeper, nested plugin)' => {
+        got => "---\nfoo:\n  bar: qux\n",
+        exp => yaml(Test::Deep::code(sub { (0, 'oh noes') })),
+        ok => 0,
+        diag => do {
+            my ($ok, $diag) = cmp_diag(
+                "---\nfoo:\n  bar: qux\n",
+                Test::Deep::code(sub { (0, 'oh noes') }),
+            );
             $diag;
         },
     },
